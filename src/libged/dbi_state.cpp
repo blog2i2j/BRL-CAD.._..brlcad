@@ -1,7 +1,7 @@
 /*                D B I _ S T A T E . C P P
  * BRL-CAD
  *
- * Copyright (c) 1990-2022 United States Government as represented by
+ * Copyright (c) 1990-2023 United States Government as represented by
  * the U.S. Army Research Laboratory.
  *
  * This library is free software; you can redistribute it and/or
@@ -2167,8 +2167,33 @@ BViewState::scene_obj(
 {
     // Solid - scene object time
     unsigned long long phash = dbis->path_hash(path_hashes, 0);
+    std::unordered_map<unsigned long long, std::unordered_map<int, struct bv_scene_obj *>>::iterator sm_it;
+    sm_it = s_map.find(phash);
     struct bv_scene_obj *sp = NULL;
-    if (s_map.find(phash) != s_map.end()) {
+    if (sm_it != s_map.end()) {
+
+	// If we have user supplied settings, we need to do some checking
+	if (vs && !vs->mixed_modes) {
+	    // If we're not allowed to mix modes, we need to erase any modes
+	    // that don't match the current mode
+	    std::vector<unsigned long long> phashes = path_hashes;
+	    if (phashes.size()) {
+		unsigned long long c_hash = phashes[phashes.size() - 1];
+		phashes.pop_back();
+		std::unordered_set<int> erase_modes;
+		std::unordered_map<int, struct bv_scene_obj *>::iterator s_it;
+		for (s_it = sm_it->second.begin(); s_it != sm_it->second.end(); s_it++) {
+		    if (s_it->first == curr_mode)
+			continue;
+		    erase_modes.insert(s_it->first);
+		}
+		std::unordered_set<int>::iterator e_it;
+		for (e_it = erase_modes.begin(); e_it != erase_modes.end(); e_it++) {
+		    erase_hpath(*e_it, c_hash, phashes, false);
+		}
+	    }
+	}
+
 	if (s_map[phash].find(curr_mode) != s_map[phash].end()) {
 	    // Already have scene object - check it against vs
 	    // settings to see if we need to update
@@ -2764,6 +2789,11 @@ BViewState::redraw(struct bv_obj_settings *vs, std::unordered_set<struct bview *
 	}
 
 	// Expand active collapsed paths to solids, creating any missing path objects
+	//
+	// NOTE:  We deliberately do NOT pass the supplied vs (if any) to these scene_obj/
+	// gather_paths calls - user specified override settings should be applied only to
+	// staged paths specified by the user.  Pre-existing geometry NOT specified by
+	// those commands does not get those settings applied during redraw.
 	std::unordered_set<size_t>::iterator sz_it;
 	for (sz_it = active_collapsed.begin(); sz_it != active_collapsed.end(); sz_it++) {
 	    std::vector<unsigned long long> cpath = ms_it->second[*sz_it];
@@ -2772,12 +2802,12 @@ BViewState::redraw(struct bv_obj_settings *vs, std::unordered_set<struct bview *
 	    dbis->get_path_matrix(m, cpath);
 	    if (ms_it->first == 3 || ms_it->first == 5) {
 		dbis->get_path_matrix(m, cpath);
-		scene_obj(objs, ms_it->first, vs, m, cpath, views, v);
+		scene_obj(objs, ms_it->first, NULL, m, cpath, views, v);
 		continue;
 	    }
 	    unsigned long long ihash = cpath[cpath.size() - 1];
 	    cpath.pop_back();
-	    gather_paths(objs, ihash, ms_it->first, v, vs, m, NULL, cpath, views, &ret);
+	    gather_paths(objs, ihash, ms_it->first, v, NULL, m, NULL, cpath, views, &ret);
 	}
 	for (sz_it = draw_invalid_collapsed.begin(); sz_it != draw_invalid_collapsed.end(); sz_it++) {
 	    std::vector<unsigned long long> cpath = ms_it->second[*sz_it];

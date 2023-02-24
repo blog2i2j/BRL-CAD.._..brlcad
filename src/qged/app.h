@@ -1,7 +1,7 @@
 /*                        C A D A P P . H
  * BRL-CAD
  *
- * Copyright (c) 2014-2022 United States Government as represented by
+ * Copyright (c) 2014-2023 United States Government as represented by
  * the U.S. Army Research Laboratory.
  *
  * This library is free software; you can redistribute it and/or
@@ -102,9 +102,6 @@ class CADApp : public QApplication
 	// do_view_change, after updating the current gedp->ged_gvp pointer to
 	// refer to the now-current view.
 	void do_quad_view_change(QtCADView *);
-
-	// Method for graphical updates that are best handled at an app level
-	void do_view_update(unsigned long long);
 
        	/* Utility slots */
     public slots:

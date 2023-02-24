@@ -1,7 +1,7 @@
 /*                       D R A W . C P P
  * BRL-CAD
  *
- * Copyright (c) 2018-2022 United States Government as represented by
+ * Copyright (c) 2018-2023 United States Government as represented by
  * the U.S. Army Research Laboratory.
  *
  * This library is free software; you can redistribute it and/or
@@ -832,7 +832,8 @@ main(int ac, char *av[]) {
 	bu_log("Done.\n");
     }
 
-    bu_log("Testing mixed drawing (shaded and wireframe)...\n");
+
+    bu_log("Test clearing of previous drawing mode (shaded and wireframe)...\n");
     s_av[0] = "draw";
     s_av[1] = "-m2";
     s_av[2] = "all.g";
@@ -843,7 +844,29 @@ main(int ac, char *av[]) {
     s_av[1] = "-m0";
     s_av[2] = "all.g";
     s_av[3] = NULL;
+    ged_exec(dbp, 4, s_av);
+
+    s_av[0] = "autoview";
+    s_av[1] = NULL;
+    ged_exec(dbp, 1, s_av);
+
+    img_cmp(1, dbp, av[1], true, soft_fail);
+    bu_log("Done.\n");
+
+
+    bu_log("Testing mixed drawing (shaded and wireframe)...\n");
+    s_av[0] = "draw";
+    s_av[1] = "-m2";
+    s_av[2] = "all.g";
+    s_av[3] = NULL;
     ged_exec(dbp, 3, s_av);
+
+    s_av[0] = "draw";
+    s_av[1] = "-A";
+    s_av[2] = "-m0";
+    s_av[3] = "all.g";
+    s_av[4] = NULL;
+    ged_exec(dbp, 4, s_av);
 
     s_av[0] = "autoview";
     s_av[1] = NULL;
