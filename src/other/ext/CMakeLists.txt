@@ -359,6 +359,11 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/assetimport.cmake)
 # https://www.graphics.rwth-aachen.de/software/openmesh/
 include(${CMAKE_CURRENT_SOURCE_DIR}/openmesh.cmake)
 
+# libirmb - Interactive and Robust Mesh Booleans library
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/irmb)
+  include(${CMAKE_CURRENT_SOURCE_DIR}/irmb.cmake)
+endif()
+
 # TCL - scripting language.  For Tcl/Tk builds we want
 # static lib building on so we get the stub libraries.
 set(BSL_CACHE ${BUILD_STATIC_LIBS})
@@ -401,6 +406,7 @@ if (COMMAND CMAKEFILES)
     CMakeLists.txt
     CMake/ExternalProject_Target.cmake
     CMake/FindASSETIMPORT.cmake
+    CMake/FindIRMB.cmake
     CMake/FindITCL.cmake
     CMake/FindLEMON.cmake
     CMake/FindNETPBM.cmake
@@ -429,6 +435,8 @@ if (COMMAND CMAKEFILES)
     assetimport.dist
     gdal.cmake
     gdal.dist
+    irmb.cmake
+    irmb.dist
     itcl.cmake
     itcl3.dist
     itk.cmake

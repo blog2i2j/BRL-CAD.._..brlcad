@@ -187,21 +187,6 @@ mark_as_advanced(LMDB_LIBRARIES)
 mark_as_advanced(LMDB_INCLUDE_DIR)
 mark_as_advanced(LMDB_INCLUDE_DIRS)
 
-# Interactive Robust Mesh Booleans - slight modification of
-# https://github.com/gcherchi/InteractiveAndRobustMeshBooleans
-#add_subdirectory(irmb)
-#include("${CMAKE_CURRENT_SOURCE_DIR}/irmb.dist")
-#CMAKEFILES_IN_DIR(irmb_ignore_files irmb)
-#set(IRMB_LIBRARY "irmb" CACHE STRING "Interactive Robust Mesh Booleans library" FORCE)
-#set(IRMB_LIBRARIES "irmb" CACHE STRING "Interactive Robust Mesh Booleans library" FORCE)
-#set(IRMB_INCLUDE_DIR "${BRLCAD_SOURCE_DIR}/src/other/irmb" CACHE STRING "Directory containing irmb header" FORCE)
-#set(IRMB_INCLUDE_DIRS "${BRLCAD_SOURCE_DIR}/src/other/irmb" CACHE STRING "Directory containing irmb header" FORCE)
-#SetTargetFolder(irmb "Third Party Libraries")
-#mark_as_advanced(IRMB_LIBRARY)
-#mark_as_advanced(IRMB_LIBRARIES)
-#mark_as_advanced(IRMB_INCLUDE_DIR)
-#mark_as_advanced(IRMB_INCLUDE_DIRS)
-
 # GCT is a collection of algorithms for geometry processing and conversion
 #add_subdirectory(gct)
 include("${CMAKE_CURRENT_SOURCE_DIR}/gct.dist")
